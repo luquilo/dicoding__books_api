@@ -52,12 +52,46 @@ function main() {
   
   // put 
   const updateBook = (book) => {
-    // tuliskan kode di sini!
+    const xhr = new XMLHttpRequest;
+
+    xhr.onload = function(){
+      const responseJson = JSON.parse(this.responseText);
+      showResponseMessage(responseJson.message)
+      getBook()
+    }
+
+    xhr.onError = function(){
+      showResponseMessage()
+    }
+
+    xhr.open('PUT', `${baseUrl}/edit/${book.id}`)
+
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.setRequestHeader('X-Auth-Token', '12345')
+
+    xhr.send(JSON.stringify(book))
+
   };
 
   // delete
   const removeBook = (bookId) => {
-    // tuliskan kode di sini!
+    const xhr = new XMLHttpRequest
+
+    xhr.onload = function(){
+      const responseJson = JSON.parse(this.responseText)
+      showResponseMessage(responseJson.message)
+      getBook()
+    }
+
+    xhr.onError = function(){
+      showResponseMessage()
+    }
+
+    xhr.open('DELETE', `${baseUrl}/delete/${bookId}`)
+
+    xhr.setRequestHeader('X-Auth-Token', '12345')
+
+    xhr.send()
   };
 
 
