@@ -81,6 +81,7 @@ function main() {
       const responseJson = JSON.parse(this.responseText)
       showResponseMessage(responseJson.message)
       getBook()
+      console.log('test branch fetch')
     }
 
     xhr.onError = function(){
