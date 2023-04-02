@@ -1,18 +1,61 @@
 function main() {
+ 
+  const baseUrl = 'https://books-api.dicoding.dev';
 
+  // get
   const getBook = () => {
-    // tuliskan kode di sini!
+    const xhr = new XMLHttpRequest();
+
+    xhr.onload = function(){
+      const responseJson = JSON.parse(this.responseText)
+
+      if(responseJson.error){
+        showResponseMessage(responseJson.message)
+      } else {
+        renderAllBooks(responseJson.books)
+      }
+
+    }
+
+    xhr.onError = function(){
+      console.log('ups something error!')
+    }
+
+    xhr.open('GET', `${baseUrl}/list`)
+    xhr.send()
+
   };
 
-
+  // post
   const insertBook = (book) => {
-    // tuliskan kode di sini!
-  };
+    const xhr = new XMLHttpRequest();
 
+    xhr.onload = function(){
+      const responseJson = JSON.parse(this.responseText)
+      showResponseMessage(responseJson.message)
+      getBook()
+    }
+
+    xhr.onError = function(){
+      showResponseMessage()
+    }
+
+    // make post request
+    xhr.open('POST', `${baseUrl}/add`)
+
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.setRequestHeader('X-Auth-Token', '12345')
+
+    xhr.send(JSON.stringify(book))
+
+  };
+  
+  // put 
   const updateBook = (book) => {
     // tuliskan kode di sini!
   };
 
+  // delete
   const removeBook = (bookId) => {
     // tuliskan kode di sini!
   };
