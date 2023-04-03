@@ -1,121 +1,103 @@
 function main() {
- 
-  const baseUrl = 'https://books-api.dicoding.dev';
+  const baseUrl = "https://books-api.dicoding.dev";
 
   // get
-  const getBook = () => {
-    const xhr = new XMLHttpRequest();
-
-    xhr.onload = function(){
-      const responseJson = JSON.parse(this.responseText)
+  const getBook = async () => {
+    try{
+      const response = await fetch(`${baseUrl}/list`)
+      const responseJson = await response.json()
 
       if(responseJson.error){
         showResponseMessage(responseJson.message)
-      } else {
+      }else{
         renderAllBooks(responseJson.books)
       }
-
+    }catch(error){
+      showResponseMessage(error)
     }
-
-    xhr.onError = function(){
-      console.log('ups something error!')
-    }
-
-    xhr.open('GET', `${baseUrl}/list`)
-    xhr.send()
-
   };
 
   // post
-  const insertBook = (book) => {
+  const insertBook = async (book) => {
+   try{
+    const response = await fetch(`${baseUrl}/add`, {
+      method: 'POST',
+      headers: {
+       'Content-Type': 'application/json',
+       'X-Auth-Token': '12345'
+      },
+      body: JSON.stringify(book)
+     })
+     const responseJson = await response.json()
+     showResponseMessage(responseJson.message)
+     getBook()
+    }catch (error){
+    showResponseMessage(error)
+   }
+    
+  };
+
+  // put
+  const updateBook = (book) => {
     const xhr = new XMLHttpRequest();
 
-    xhr.onload = function(){
-      const responseJson = JSON.parse(this.responseText)
-      showResponseMessage(responseJson.message)
-      getBook()
-    }
-
-    xhr.onError = function(){
-      showResponseMessage()
-    }
-
-    // make post request
-    xhr.open('POST', `${baseUrl}/add`)
-
-    xhr.setRequestHeader('Content-Type', 'application/json')
-    xhr.setRequestHeader('X-Auth-Token', '12345')
-
-    xhr.send(JSON.stringify(book))
-
-  };
-  
-  // put 
-  const updateBook = (book) => {
-    const xhr = new XMLHttpRequest;
-
-    xhr.onload = function(){
+    xhr.onload = function () {
       const responseJson = JSON.parse(this.responseText);
-      showResponseMessage(responseJson.message)
-      getBook()
-    }
+      showResponseMessage(responseJson.message);
+      getBook();
+    };
 
-    xhr.onError = function(){
-      showResponseMessage()
-    }
+    xhr.onError = function () {
+      showResponseMessage();
+    };
 
-    xhr.open('PUT', `${baseUrl}/edit/${book.id}`)
+    xhr.open("PUT", `${baseUrl}/edit/${book.id}`);
 
-    xhr.setRequestHeader('Content-Type', 'application/json')
-    xhr.setRequestHeader('X-Auth-Token', '12345')
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("X-Auth-Token", "12345");
 
-    xhr.send(JSON.stringify(book))
-
+    xhr.send(JSON.stringify(book));
   };
 
   // delete
   const removeBook = (bookId) => {
-    const xhr = new XMLHttpRequest
+    const xhr = new XMLHttpRequest();
 
-    xhr.onload = function(){
-      const responseJson = JSON.parse(this.responseText)
-      showResponseMessage(responseJson.message)
-      getBook()
-      console.log('test branch fetch')
-    }
+    xhr.onload = function () {
+      const responseJson = JSON.parse(this.responseText);
+      showResponseMessage(responseJson.message);
+      getBook();
+      console.log("test branch fetch");
+    };
 
-    xhr.onError = function(){
-      showResponseMessage()
-    }
+    xhr.onError = function () {
+      showResponseMessage();
+    };
 
-    xhr.open('DELETE', `${baseUrl}/delete/${bookId}`)
+    xhr.open("DELETE", `${baseUrl}/delete/${bookId}`);
 
-    xhr.setRequestHeader('X-Auth-Token', '12345')
+    xhr.setRequestHeader("X-Auth-Token", "12345");
 
-    xhr.send()
+    xhr.send();
   };
 
-
   fetch(`${baseUrl}/list`)
-    .then(resolve => {
+    .then((resolve) => {
       // console.log(resolve)
-      return resolve.json()
+      return resolve.json();
     })
-    .then(resolveJson => console.log(resolveJson))
-    .catch(error => console.log(error))
-  
-  
-  
-  
+    .then((resolveJson) => console.log(resolveJson))
+    .catch((error) => console.log(error));
+
   /*
       jangan ubah kode di bawah ini ya!
   */
 
   const renderAllBooks = (books) => {
-    const listBookElement = document.querySelector('#listBook');
-    listBookElement.innerHTML = '';
+    const listBookElement = document.querySelector("#listBook");
+    listBookElement.innerHTML = "";
 
-    books.forEach(book => {
+    books.forEach((book) => {
       listBookElement.innerHTML += `
         <div class="col-lg-4 col-md-6 col-sm-12" style="margin-top: 12px;">
           <div class="card">
@@ -129,43 +111,42 @@ function main() {
       `;
     });
 
-    const buttons = document.querySelectorAll('.button-delete');
-    buttons.forEach(button => {
-      button.addEventListener('click', event => {
+    const buttons = document.querySelectorAll(".button-delete");
+    buttons.forEach((button) => {
+      button.addEventListener("click", (event) => {
         const bookId = event.target.id;
-        
+
         removeBook(bookId);
       });
     });
   };
 
-  const showResponseMessage = (message = 'Check your internet connection') => {
+  const showResponseMessage = (message = "Check your internet connection") => {
     alert(message);
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
+    const inputBookId = document.querySelector("#inputBookId");
+    const inputBookTitle = document.querySelector("#inputBookTitle");
+    const inputBookAuthor = document.querySelector("#inputBookAuthor");
+    const buttonSave = document.querySelector("#buttonSave");
+    const buttonUpdate = document.querySelector("#buttonUpdate");
 
-    const inputBookId = document.querySelector('#inputBookId');
-    const inputBookTitle = document.querySelector('#inputBookTitle');
-    const inputBookAuthor = document.querySelector('#inputBookAuthor');
-    const buttonSave = document.querySelector('#buttonSave');
-    const buttonUpdate = document.querySelector('#buttonUpdate');
-
-    buttonSave.addEventListener('click', function () {
+    buttonSave.addEventListener("click", function () {
       const book = {
         id: Number.parseInt(inputBookId.value),
         title: inputBookTitle.value,
-        author: inputBookAuthor.value
+        author: inputBookAuthor.value,
       };
-      
+
       insertBook(book);
     });
 
-    buttonUpdate.addEventListener('click', function () {
+    buttonUpdate.addEventListener("click", function () {
       const book = {
         id: Number.parseInt(inputBookId.value),
         title: inputBookTitle.value,
-        author: inputBookAuthor.value
+        author: inputBookAuthor.value,
       };
 
       updateBook(book);
