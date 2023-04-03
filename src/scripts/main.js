@@ -96,6 +96,13 @@ function main() {
   };
 
 
+  fetch(`${baseUrl}/list`)
+    .then(resolve => {
+      // console.log(resolve)
+      return resolve.json()
+    })
+    .then(resolveJson => console.log(resolveJson))
+    .catch(error => console.log(error))
   
   
   
