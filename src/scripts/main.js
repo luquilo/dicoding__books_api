@@ -37,46 +37,44 @@ function main() {
   };
 
   // put
-  const updateBook = (book) => {
-    fetch(`${baseUrl}/edit/${book.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Auth-Token": "12345",
-      },
-      body: JSON.stringify(book)
-    })
-      .then(response => {
-        return response.json()
+  const updateBook = async (book) => {
+    
+    try{
+      const response = await fetch(`${baseUrl}/edit/${book.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": "12345",
+        },
+        body: JSON.stringify(book)
       })
-      .then(responseJson => {
-        showResponseMessage(responseJson.message);
-        getBook()
-      })
-      .catch(error => {
-        showResponseMessage(error)
-      })
+
+      const responseJson = await response.json()
+
+      showResponseMessage(responseJson.message)
+      getBook()
+
+    }catch(error){
+      showResponseMessage(error)
+    }
   };
 
   // delete
-  const removeBook = (bookId) => {
-    const xhr = new XMLHttpRequest();
+  const removeBook = async (bookId) => {
+    try{
+      const response = await fetch(`${baseUrl}/delete/${bookId}`, {
+        method: "DELETE",
+        headers: {
+          "X-Auth-Token": "12345"
+        }
+      })
+      const responseJson = await response.json()
+      showResponseMessage(responseJson.message)
+      getBook()
+    }catch(error){
+      showResponseMessage(error)
+    }
 
-    xhr.onload = function () {
-      const responseJson = JSON.parse(this.responseText);
-      showResponseMessage(responseJson.message);
-      getBook();
-    };
-
-    xhr.onError = function () {
-      showResponseMessage();
-    };
-
-    xhr.open("DELETE", `${baseUrl}/delete/${bookId}`);
-
-    xhr.setRequestHeader("X-Auth-Token", "12345");
-
-    xhr.send();
   };
 
   fetch(`${baseUrl}/list`)
